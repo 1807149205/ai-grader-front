@@ -10,6 +10,7 @@ const userStore = useUserStore();
 
 
 onMounted(() => {
+  
   if (!userStore.isLogin) {
     router.push('/loginRegister')
   }
