@@ -1,11 +1,21 @@
-<script setup lang="ts"></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <router-view/>
 </template>
+<script lang="ts" setup>
+import { onMounted } from 'vue';
+import { useUserStore } from './stores/user';
+import router from './router';
 
-<style scoped></style>
+const userStore = useUserStore();
+
+
+onMounted(() => {
+  if (!userStore.isLogin) {
+    router.push('/loginRegister')
+  }
+})
+
+</script>
+<style scoped>
+
+</style>
