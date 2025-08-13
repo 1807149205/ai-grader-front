@@ -12,7 +12,9 @@ export interface UserLoginDTO {
 export interface UserRegisterDTO {
   username: string
   password: string
-  role: string
+  role: string,
+  managerName: string;
+  universityId: number
 }
 
 // 登录

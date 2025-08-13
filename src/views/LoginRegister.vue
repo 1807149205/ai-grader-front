@@ -15,13 +15,40 @@
           <a-input-password v-model:value="form.password" placeholder="请输入密码" />
         </a-form-item>
 
-        <!-- 注册模式下多一个角色输入 -->
+        <div v-if="form.role == '1' && !isLogin">
+          <a-form-item label="管理员姓名" name="managerName">
+            <a-input v-model:value="form.managerName" placeholder="请输入管理员姓名" />
+          </a-form-item>
+          <a-form-item label="所属大学" name="universityId">
+             <a-select
+                v-model:value="form.universityId"
+                show-search
+                style="width: 100%"
+                :filter-option="filterOption"
+                :options="universityData"
+                @change="universityChange"
+              ></a-select>
+          </a-form-item>
+        </div>
+
+        
+
+        <!-- 注册模式下多一个角色选择框 -->
         <a-form-item
           v-if="!isLogin"
           label="角色"
           name="role"
+          :rules="[{ required: true, message: '请选择角色', trigger: 'change' }]"
         >
-          <a-input v-model:value="form.role" placeholder="请输入角色，例如 USER 或 ADMIN" />
+          <a-select
+            v-model:value="form.role"
+            placeholder="请选择角色"
+            allow-clear
+          >
+            <a-select-option :value="1">管理员</a-select-option>
+            <a-select-option :value="2">教师</a-select-option>
+            <a-select-option :value="3">学生</a-select-option>
+          </a-select>
         </a-form-item>
 
         <a-form-item>
@@ -40,29 +67,40 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { login, register, type UserLoginDTO, type UserRegisterDTO } from '@/api/login'
-import { useUserStore } from '@/stores/user'
-import router from '@/router';
+import { useUserStore, type LoginUserInfo } from '@/stores/user'
+import router from '@/router'
+import { getAllUniversity } from '@/api/university'
 
-const userStore = useUserStore();
+const userStore = useUserStore()
 
 // 是否是登录模式
 const isLogin = ref(true)
 
-// 表单数据
+// 表单数据（role 改成 number | undefined）
 const form = reactive<UserLoginDTO & Partial<UserRegisterDTO>>({
   username: '',
   password: '',
-  role: ''
+  role: undefined,
+  universityId: null,
+  managerName: ''
 })
+
+const universityData = ref([]);
+
+const filterOption = (input: string, option: any) => {
+  // console.log(input, option);
+  return option.label.includes(input)
+}
 
 // 表单验证规则
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-  role: [{ required: false }] // 注册模式下会额外验证
+  managerName: [{ required: true, message: '请输入管理员姓名', trigger: 'blur' }],
+  universityId: [{ required: true, message: '请输入所属学校', trigger: 'blur' }],
 }
 
 const loading = ref(false)
@@ -72,27 +110,32 @@ function toggleMode() {
   isLogin.value = !isLogin.value
 }
 
+const universityChange = (e) => {
+  console.log(e);
+  
+}
+
 // 提交表单
 async function onSubmit() {
   loading.value = true
   try {
     if (isLogin.value) {
       const resp = await login({ username: form.username, password: form.password })
-      const info = resp.data;
-      userStore.setLoginUserInfo(info);
+      userStore.setLoginUserInfo(resp as unknown as LoginUserInfo)
       message.success('登录成功')
       await router.push('/')
-      
     } else {
       if (!form.role) {
-        message.error('请输入角色')
+        message.error('请选择角色')
         loading.value = false
         return
       }
       await register({
         username: form.username,
         password: form.password,
-        role: form.role
+        role: form.role,
+        managerName: form.managerName,
+        universityId: form.universityId
       })
       message.success('注册成功')
       isLogin.value = true
@@ -103,6 +146,20 @@ async function onSubmit() {
     loading.value = false
   }
 }
+
+const fetchUniversityData = async () => {
+  const resp = await getAllUniversity();
+  universityData.value = resp.map(d => {
+    return {
+      label: d.universityName,
+      value: d.id
+    }
+  });
+}
+
+onMounted(() => {
+  fetchUniversityData();
+})
 </script>
 
 <style scoped>
