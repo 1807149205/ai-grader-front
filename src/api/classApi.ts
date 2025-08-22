@@ -6,7 +6,7 @@ export interface ClassByUniversityVO {
     className: string
 }
 
-export function getClassByUniversityId(universityId: number) {
+export function getClassByUniversityId(universityId: number): Promise<ClassByUniversityVO[]> {
     return request.get<ClassByUniversityVO[]>('/manager/class/getClassByUniversityId', {
         params: {
             universityId

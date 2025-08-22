@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import StudentComp from '@/component/StudentComp.vue';
 import TeacherComp from '@/component/TeacherComp.vue';
 
 
@@ -13,6 +14,7 @@ import TeacherComp from '@/component/TeacherComp.vue';
     <div class="ant-h2-title">
         学生管理
     </div>
+    <StudentComp/>
 </template>
 
 <style scoped>
