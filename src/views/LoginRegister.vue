@@ -1,12 +1,7 @@
 <template>
   <div class="login-container">
     <a-card class="login-card" :title="isLogin ? '用户登录' : '用户注册'">
-      <a-form
-        :model="form"
-        :rules="rules"
-        layout="vertical"
-        @finish="onSubmit"
-      >
+      <a-form :model="form" :rules="rules" layout="vertical" @finish="onSubmit">
         <a-form-item label="用户名" name="username">
           <a-input v-model:value="form.username" placeholder="请输入用户名" />
         </a-form-item>
@@ -20,18 +15,16 @@
             <a-input v-model:value="form.managerName" placeholder="请输入管理员姓名" />
           </a-form-item>
           <a-form-item label="所属大学" name="universityId">
-             <a-select
-                v-model:value="form.universityId"
-                show-search
-                style="width: 100%"
-                :filter-option="filterOption"
-                :options="universityData"
-                @change="universityChange"
-              ></a-select>
+            <a-select
+              v-model:value="form.universityId"
+              show-search
+              style="width: 100%"
+              :filter-option="filterOption"
+              :options="universityData"
+              @change="universityChange"
+            ></a-select>
           </a-form-item>
         </div>
-
-        
 
         <!-- 注册模式下多一个角色选择框 -->
         <a-form-item
@@ -40,11 +33,7 @@
           name="role"
           :rules="[{ required: true, message: '请选择角色', trigger: 'change' }]"
         >
-          <a-select
-            v-model:value="form.role"
-            placeholder="请选择角色"
-            allow-clear
-          >
+          <a-select v-model:value="form.role" placeholder="请选择角色" allow-clear>
             <a-select-option :value="1">管理员</a-select-option>
             <a-select-option :value="2">教师</a-select-option>
             <a-select-option :value="3">学生</a-select-option>
@@ -85,10 +74,10 @@ const form = reactive<UserLoginDTO & Partial<UserRegisterDTO>>({
   password: '',
   role: undefined,
   universityId: null,
-  managerName: ''
+  managerName: '',
 })
 
-const universityData = ref([]);
+const universityData = ref([])
 
 const filterOption = (input: string, option: any) => {
   // console.log(input, option);
@@ -111,8 +100,7 @@ function toggleMode() {
 }
 
 const universityChange = (e) => {
-  console.log(e);
-  
+  console.log(e)
 }
 
 // 提交表单
@@ -135,7 +123,7 @@ async function onSubmit() {
         password: form.password,
         role: form.role,
         managerName: form.managerName,
-        universityId: form.universityId
+        universityId: form.universityId,
       })
       message.success('注册成功')
       isLogin.value = true
@@ -148,17 +136,17 @@ async function onSubmit() {
 }
 
 const fetchUniversityData = async () => {
-  const resp = await getAllUniversity();
-  universityData.value = resp.map(d => {
+  const resp = await getAllUniversity()
+  universityData.value = resp.map((d) => {
     return {
       label: d.universityName,
-      value: d.id
+      value: d.id,
     }
-  });
+  })
 }
 
 onMounted(() => {
-  fetchUniversityData();
+  fetchUniversityData()
 })
 </script>
 
