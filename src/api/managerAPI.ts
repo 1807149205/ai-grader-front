@@ -35,5 +35,27 @@ export default {
   },
   async addStudent(data: AddStudentDTO) {
     return request.post('/manager/student/add', data)
+  },
+  async collegeList(universityId: number, collegeId?: number) {
+    return request.get(`/manager/college/list`, {
+      params: { universityId, collegeId }
+    })
+  },
+  async addCollege(data: { collegeName: string; universityId: number }) {
+    return request.post('/manager/college/add', data)
+  },
+  async editCollege(data: { collegeId: string; collegeName: string; }) {
+    return request.post('/manager/college/edit', data)
+  },
+  async majorList(collegeId: number, majorId?: number, universityId?: number) {
+    return request.get(`/manager/major/list`, {
+      params: { collegeId, majorId, universityId }
+    })
+  },
+  async majorEdit(data: { majorId: number | string; majorName: string; }) {
+    return request.post('/manager/major/edit', data)
+  },
+  async addMajor(data: { majorName: string; collegeId: number | string }) {
+    return request.post('/manager/major/add', data)
   }
 }

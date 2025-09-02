@@ -7,6 +7,7 @@
       >
         智慧学生成绩管理系统
         <div style="font-size: 12px">{{ subTitle }}</div>
+        <div style="font-size: 12px">{{ userStore.loginUserInfo?.university.universityName }}</div>
       </div>
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item v-for="item in menuItems" :key="item.key">
